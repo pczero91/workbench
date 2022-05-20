@@ -1,13 +1,14 @@
 {
-  "name": "chat-server",
+  "name": "lab-chat-server",
   "version": "1.0.0",
-  "description": "Utilities to set a chat server",
+  "description": "Test chat-server tool for various interfaces",
   "main": "chat-server.js",
   "directories": {
-    "test": "test"
+    "test": "tests"
   },
   "scripts": {
-    "test": "node test/test-chat.js"
+    "test": "npm run test-01",
+    "test-01": "node tests/01-cmd_only/test-chat.js"
   },
   "keywords": [
     "chat",
