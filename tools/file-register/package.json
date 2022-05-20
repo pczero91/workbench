@@ -1,0 +1,19 @@
+{
+  "name": "file-register",
+  "version": "1.0.0",
+  "description": "File Register class for transfer files through a server",
+  "main": "FileRegister.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node test/test.js"
+  },
+  "keywords": [
+    "file",
+    "transfer",
+    "download"
+  ],
+  "author": "Pedro Castaneda",
+  "license": "ISC"
+}

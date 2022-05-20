@@ -1,0 +1,19 @@
+{
+  "name": "printer",
+  "version": "1.0.0",
+  "description": "Format and displays information on a Terminal",
+  "main": "Printer.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node test/test.js"
+  },
+  "keywords": [
+    "terminal",
+    "display",
+    "formating"
+  ],
+  "author": "Pedro Castaneda",
+  "license": "ISC"
+}

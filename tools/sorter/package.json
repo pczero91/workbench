@@ -1,0 +1,14 @@
+{
+  "name": "sorter",
+  "version": "1.0.0",
+  "description": "Sort methods library",
+  "main": "Sorter.js",
+  "scripts": {
+    "test": "node test/test.js"
+  },
+  "keywords": [
+    "sort"
+  ],
+  "author": "Pedro Castaneda",
+  "license": "ISC"
+}

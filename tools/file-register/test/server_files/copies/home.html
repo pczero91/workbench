@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+    </head>
+    <body>
+        <a href="http://localhost:3001/2" download = "texto.txt">descargar texto</a>
+        <a href="http://localhost:3001/4" download = "photo.png">descargar photo</a>
+        <a href="http://localhost:3001/3" download = "movie.avi">descargar película</a>
+        <br/>
+        <form id="form-upload" enctype="multipart/form-data" method="post" action="http://localhost:3001">
+            <input id="file" name="movie" type="file" onchange="getFileInfo()" multiple/>
+            <input type="submit" value="submit" id="submit"/>
+        </form>
+    </body>
+</html>
+
+Content-Disposition: form-data; name="files"; filename="originalFile.txt"
+Content-Type: text/plain
+
+This is -a test!
+--

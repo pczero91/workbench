@@ -1,0 +1,16 @@
+{
+  "name": "form-parser",
+  "version": "1.0.0",
+  "description": "Data parser form html forms",
+  "main": "FormParser.js",
+  "scripts": {
+    "test": "node test/test.js"
+  },
+  "keywords": [
+    "form",
+    "parser",
+    "html"
+  ],
+  "author": "Pedro Castaneda",
+  "license": "ISC"
+}
