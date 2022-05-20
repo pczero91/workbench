@@ -1,0 +1,14 @@
+{
+  "name": "chat-server",
+  "version": "1.0.0",
+  "description": "Opens a server and set listeners to socket related events during Users connections",
+  "main": "Server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "chat", "server"
+  ],
+  "author": "Pedro Castaneda",
+  "license": "ISC"
+}

@@ -1,0 +1,19 @@
+{
+  "name": "chat-server",
+  "version": "1.0.0",
+  "description": "Utilities to set a chat server",
+  "main": "chat-server.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node test/test-chat.js"
+  },
+  "keywords": [
+    "chat",
+    "server",
+    "user"
+  ],
+  "author": "Pedro Castaneda",
+  "license": "ISC"
+}
