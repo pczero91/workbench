@@ -4,7 +4,7 @@ const http  = require('http');
 const fs = require('fs');
 
 let PORT = process.env.PORT || 3000;
-let rootUrl = 'http://pedro.rocalog.com/';
+let rootUrl = 'http://localhost:3000/';
 let mainFolder = 'server_files';
 let localFolder = path.join(__dirname, mainFolder);
 let registerPath = path.join(__dirname)
