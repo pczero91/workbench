@@ -15,5 +15,8 @@
     "download"
   ],
   "author": "Pedro Castaneda",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "FormParser": "file:../form-parser"
+  }
 }
