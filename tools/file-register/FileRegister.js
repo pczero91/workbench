@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { FormParser } = require('./../form-parser/FormParser');
+const { FormParser } = require('FormParser');
 
 class FileRegister {
 
