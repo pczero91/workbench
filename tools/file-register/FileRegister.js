@@ -6,6 +6,7 @@ class FileRegister {
 
     #registerPath;
     #localFolder;
+    #streams = [];
 
     constructor(route, registerPath = __dirname) {
         this.#localFolder = route;
@@ -15,6 +16,17 @@ class FileRegister {
 
     get mainFolder() {
         return path.basename(this.#localFolder);
+    }
+
+    get fileUploadBytes() {
+        let output = [];
+        this.#streams.forEach((str) => {
+            output.push({
+                filename: str.filename,
+                bytesWritten: str.bytesWritten
+            })
+        });
+        return output;
     }
 
     sendFile(res, id) {
@@ -59,17 +71,33 @@ class FileRegister {
         if (index !== -1) {
             directory = path.join(folders[index].path, folder);
         }
-        console.log(directory);
-        getPostDataStream(req, (data, file, start) => {
-            let flag = 'a';
-            if (start) {
-                flag = 'w';
+
+        this.#streams = [];
+        console.log('postFile');
+        getPostDataStream(req, (bytes, file, type) => {
+            if (file === '' || file === undefined) {
+                return;
             }
-            fs.writeFileSync(path.join(directory, file), data, { flag: flag });
-        },
-        () => {
-            callback();
+            let index = this.#streams.findIndex((val) => {
+                return val.filename == file;
+            })
+            
+            if (index === -1) {
+                this.#streams.push({
+                    filename: file,
+                    stream: fs.createWriteStream(path.join(directory, file), {flags: 'w'}),
+                    bytesWritten: 0
+                });
+                index = this.#streams.length - 1;
+                this.#streams[index].stream.write(Buffer.from({length:0}));
+                this.#streams[index].stream = fs.createWriteStream(path.join(directory, file), {flags: 'a'});
+            }
+
+            this.#streams[index].stream.write(bytes);
+            this.#streams[index].bytesWritten += bytes.length;
+        }, () => {
             getFiles(this.#localFolder, this.#registerPath);
+            callback();
         });
     }
 }
@@ -116,16 +144,9 @@ function idGen(counter = 0) {
 
 function getPostDataStream(req, callback, completed) {
     let data = new FormParser(req);
-    let start = false;
-    let currentFile = '';
     req.on('data', (chunk) => {
-        data.getData(chunk, (byte, file) => {
-            if (file !== currentFile) {
-                start = true;
-                currentFile = file;
-            }
-            callback(byte, file, start)
-            start = false;
+        data.getData(chunk, (bytes, file, type) => {
+            callback(bytes, file, type);
         });
     });
     req.on('end', () => {

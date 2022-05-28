@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Cloud Zero</title>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="src/style.css"/>
+    </head>
+    <body>
+        <br />
+        <form id="form-upload" enctype="multipart/form-data" method="post" action="' + rootUrl + 'f=' + folder + '">
+            <div class="form-area">
+                <div class="input-container">
+                    <input id="file" name="files" type="file" onchange="getFilesSize(this)" multiple/>
+                </div>
+                <div class="input-container button">
+                    <input type="submit" value="submit" id="submit"/>
+                </div>
+            </div>
+            <br />
+            <br />
+        </form>
+        <div id="server-content">
+        </div>
+        <div id="progress">
+        </div>
+    </body>
+    <script src="src/main.js"></script> 
+</html>

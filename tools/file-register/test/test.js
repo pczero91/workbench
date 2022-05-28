@@ -4,7 +4,8 @@ const http  = require('http');
 const fs = require('fs');
 
 let PORT = process.env.PORT || 3000;
-let rootUrl = 'http://localhost:3000/';
+// let rootUrl = 'http://localhost:3000/';
+let rootUrl = 'http://pedro.rocalog.com/';
 let mainFolder = 'server_files';
 let localFolder = path.join(__dirname, mainFolder);
 let registerPath = path.join(__dirname)
@@ -48,6 +49,21 @@ function typeOfRequest(req, res, folder, id = '') {
 
 function handleGet(req, res, folder, id) {
     let url = req.url;
+    let match = url.match(/\/src\/(?<source>[\w\W]+)/);
+
+    if (match) {
+        let source = match.groups.source;
+        let ext = path.extname(source).split('.').join('');
+        let contents = {
+            js: 'text/javascript',
+            css: 'text/css'
+        }
+        res.writeHead(200, {'content-type': contents[ext]});
+        res.write(fs.readFileSync(path.join(__dirname, source)));
+        res.end();
+        return;
+    }
+    
     if (url == '/') {
         fr.getDataIndex(res, (data) => {
             res.writeHead(200, {"content-type": "text/html"});
@@ -62,29 +78,27 @@ function handleGet(req, res, folder, id) {
             res.write(data);
             res.end();
         });
+    } else if (url == '/sizes') {
+        res.writeHead(200, {'content-type': 'application/json'});
+        data = JSON.stringify(fr.fileUploadBytes);
+        res.write(data);
+        res.end();
     } else {
         fr.sendFile(res, id);
+    }
+
+    match = url.match(/\/bytes[\/]*/);
+
+    if (match) {
+        let bytes = fr.fileUploadBytes;
+        res.writeHead(200, {'content-type': 'application/json'});
+        res.write(JSON.stringify(bytes));
+        res.end();
     }
 }
 
 function handlePost(req, res, folder) {
     fr.postFile(req, res, folder, () => {
-        let html = '<!DOCTYPE html>\n';
-        html += '<html>\n';
-        html += '<head>\n';
-        html += '<title>Upload Complete</title>\n';
-        html += '<meta charset="utf-8" />\n';
-        html += '</head>\n';
-        html += '<body>\n';
-        html += '<h1>Post Received!</h1>\n';
-        html += '<a href="' + rootUrl + '/f=' + folder + '">';
-        html += 'Back';
-        html += '</a>\n';
-        html += '</body>\n';
-        html += '</html>';
-        res.writeHead(200, {'content-type': 'text/html'});
-        res.write(html);
-        res.end();
         console.log('End of upload');
     });
 }
@@ -107,47 +121,79 @@ function htmlDefaultModel(data, folder = '', registerPath = '', rootUrl = 'http:
     }
     let files = '';
     let dirs = '';
-    let html = '<!DOCTYPE html>\n';
-    html += '<html>\n';
-    html += '<head>\n';
-    html += '<title>Cloud Zero</title>\n';
-    html += '<meta charset="utf-8" />\n';
-    html += '</head>\n';
-    html += '<body>\n';
-    html += '<br />\n';
-    html += '<form id="form-upload" enctype="multipart/form-data" method="post" action="' + rootUrl + 'f=' + folder + '">\n';
-    html += '<input id="file" name="files" type="file" multiple/>';
-    html += '<input type="submit" value="submit" id="submit"/>';
-    html += '<br />\n';
-    html += '<br />\n';
-    html += '</form>\n';
+
+    let template = fs.readFileSync('./test/index.html', { encoding: 'utf8' });
+
+    let match = template.match(/<form [^>]*>/);
+    if(!match) { return }
+
+    let original = match[0];
+    let modified = '<form ';
+    let formParts = {};
+
+    match = original.match(/id="(?<id>[^"]+)"/);
+
+    if (match) { formParts.id = match.groups.id }
+
+    match = original.match(/enctype="(?<enctype>[^"]+)"/);
+    if (match) { formParts.enctype = match.groups.enctype }
+
+    match = original.match(/method="(?<method>[^"]+)"/);
+    if (match) { formParts.method = match.groups.method }
+
+    formParts.action = rootUrl + 'f=' + folder;
+
+    for (let key in formParts) {
+        modified += key + '="' + formParts[key] + '" ';
+    }
+
+    modified += '>\r\n';
+
+    template = template.replace(original, modified);
+
+    let html = '';
     data.forEach((d) => {
         if (path.basename(d.path) !== folder) {
             return;
         }
         if (d.extension == 'dir') {
+            dirs += '<div class="content-folder">\n';
             dirs += '<a href="' + rootUrl + 'f=' + d.name + '">\n';
+            dirs += '<div>\n';
             dirs += d.name + '\n';
+            dirs += '</div>\n';
             dirs += '</a>\n';
-            dirs += '<br />\n'
+            dirs += '</div>\n';
+            // dirs += '<br />\n';
         } else {
+            files += '<div class="content-file">\n';
             files += '<a href="' + rootUrl + d.id + '" download="' + d.name + '">\n';
+            files += '<div>\n';
             files += d.name + '\n';
+            files += '</div>\n';
             files += '</a>\n';
-            files += '<br />\n'
+            files += '</div>\n';
+            // files += '<br />\n';
         }
     });
+    html += '<div id="content-folders">\n';
     html += dirs;
-    html += '<br />\n';
+    html += '</div>\n';
+    html += '<div id="content-files">\n';
     html += files;
+    html += '</div>\n';
     if (index !== -1) {
         previousFolder = path.basename(folders[index].path);
         html += '<a href="' + rootUrl + 'f=' + previousFolder + '">\n';
         html += 'Back\n';
         html += '</a>\n';
     }
-    html += '</body>\n';
-    html += '</html>';
+    match = template.match(/<div id="server-content">[\r\n\s\t]*<\/div>{0,1}/);
+    if(match) {
+        original = match[0];
+        html = '<div id="server-content">\r\n' + html + '</div>\r\n';
+        template = template.replace(original, html)
+    }
 
-    return html;
+    return template;
 }
