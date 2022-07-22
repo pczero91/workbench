@@ -1,0 +1,18 @@
+{
+  "name": "data-streamer",
+  "version": "1.0.0",
+  "description": "Object that stream data as requested",
+  "main": "DataStreamer.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node ./test/test.js"
+  },
+  "keywords": [
+    "streamer",
+    "upload"
+  ],
+  "author": "Pedro Castaneda",
+  "license": "ISC"
+}
